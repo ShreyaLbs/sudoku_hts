@@ -8,10 +8,20 @@
         this.timer = 0;
         this.timerInterval = null;
         this.isGameComplete = false;
+        this.difficulty = 'medium'; // default difficulty
         
         this.initializeGame();
         this.setupEventListeners();
         this.startTimer();
+    }
+    
+    getDifficultyCount() {
+        switch (this.difficulty) {
+            case 'easy':   return 30;
+            case 'medium': return 45;
+            case 'hard':   return 55;
+            default:       return 45;
+        }
     }
     
     initializeGame() {
@@ -32,7 +42,7 @@
             }
         }
         
-        this.removeNumbers(45);
+        this.removeNumbers(this.getDifficultyCount());
         
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
@@ -185,8 +195,7 @@
 
             const { row, col } = this.selectedCell;
             const cellKey = `${row}-${col}`;
-
-            // Don't allow editing given cells
+            
             if (this.givenCells.has(cellKey)) return;
 
             // ✅ Number keys 1-9 to fill cell
@@ -209,6 +218,12 @@
         });
         
         document.getElementById('newGameBtn').addEventListener('click', () => {
+            this.newGame();
+        });
+
+        // ✅ Difficulty selector event listener
+        document.getElementById('difficultySelect').addEventListener('change', (e) => {
+            this.difficulty = e.target.value;
             this.newGame();
         });
     }
@@ -277,7 +292,7 @@
         this.isGameComplete = false;
         this.generateNewPuzzle();
         this.renderGrid();
-        this.updateStatus("New game! Good luck!");
+        this.updateStatus(`New ${this.difficulty} game! Good luck!`);
     }
     
     startTimer() {
